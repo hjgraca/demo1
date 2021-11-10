@@ -1,12 +1,7 @@
 name: build
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches: 
-      - main
+  workflow_call:
   workflow_dispatch:
     
 jobs:
@@ -29,5 +24,3 @@ jobs:
       with:
         name: binary
         path: './src'
-    
-      
