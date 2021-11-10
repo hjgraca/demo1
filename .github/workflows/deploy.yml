@@ -11,12 +11,12 @@ on:
 
 jobs:
   Build:
-    uses: ${{ env.GITHUB_REPOSITORY }}/.github/workflows/build.yml@main
+    uses: ${GITHUB_WORKFLOW}/.github/workflows/build.yml@main
   
   Review:
     needs: Build
     if: github.event_name == 'pull_request'
-    uses: ${{ env.GITHUB_REPOSITORY }}/.github/workflows/deploy-az-func.yml@main
+    uses: ${GITHUB_WORKFLOW}/.github/workflows/deploy-az-func.yml@main
     with:
       environment: dev
       function-name: empowering-partners-pt-dev
@@ -25,7 +25,7 @@ jobs:
       APP_SETTINGS: '${{ secrets.APP_SETTINGS }}'
         
   Staging:
-    uses: ${{ env.GITHUB_REPOSITORY }}/.github/workflows/deploy-az-func.yml@main
+    uses: ${GITHUB_WORKFLOW}/.github/workflows/deploy-az-func.yml@main
     needs: Build
     if: github.event.ref == 'refs/heads/main'
     with:
@@ -38,7 +38,7 @@ jobs:
   Production:
     needs: Staging
     if: github.event.ref == 'refs/heads/main'
-    uses: ${{ env.GITHUB_REPOSITORY }}/.github/workflows/deploy-az-func.yml@main
+    uses: ${GITHUB_WORKFLOW}/.github/workflows/deploy-az-func.yml@main
     with:
       environment: production
       function-name: empowering-partners-pt-prod
