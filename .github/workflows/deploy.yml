@@ -1,0 +1,47 @@
+name: deploy
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+
+jobs:
+  Build:
+    uses: ${{ env.GITHUB_REPOSITORY }}/.github/workflows/build.yml@main
+  
+  Review:
+    needs: Build
+    if: github.event_name == 'pull_request'
+    uses: ${{ env.GITHUB_REPOSITORY }}/.github/workflows/deploy-az-func.yml@main
+    with:
+      environment: dev
+      function-name: empowering-partners-pt-dev
+    secrets:
+      AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+      APP_SETTINGS: '${{ secrets.APP_SETTINGS }}'
+        
+  Staging:
+    uses: ${{ env.GITHUB_REPOSITORY }}/.github/workflows/deploy-az-func.yml@main
+    needs: Build
+    if: github.event.ref == 'refs/heads/main'
+    with:
+      environment: staging
+      function-name: empowering-partners-pt-stage
+    secrets:
+      AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+      APP_SETTINGS: '${{ secrets.APP_SETTINGS }}' 
+        
+  Production:
+    needs: Staging
+    if: github.event.ref == 'refs/heads/main'
+    uses: ${{ env.GITHUB_REPOSITORY }}/.github/workflows/deploy-az-func.yml@main
+    with:
+      environment: production
+      function-name: empowering-partners-pt-prod
+    secrets:
+      AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+      APP_SETTINGS: '${{ secrets.APP_SETTINGS }}' 
