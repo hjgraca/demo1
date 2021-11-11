@@ -8,7 +8,7 @@ import (
 )
 
 func helloHandler(w http.ResponseWriter, r *http.Request) {
-	message := fmt.Sprintf("Hello from Azure Functions! This is the %s environment!\n", os.Getenv("ENV"))
+	message := fmt.Sprintf("Hello Partners!! This is the %s environment!\n", os.Getenv("ENV"))
 	fmt.Fprint(w, message)
 }
 
